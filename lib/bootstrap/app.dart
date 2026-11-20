@@ -1,4 +1,4 @@
-import 'package:expance_tracker/pages/add_transaction_page.dart';
+import 'package:expance_tracker/pages/home_page.dart';
 import 'package:material_ui/material_ui.dart';
 
 class App extends StatelessWidget {
@@ -7,9 +7,10 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'Expance Tracker',
       theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
-      home: const AddTransactionPage(),
+      home: const HomePage(),
     );
   }
 }
