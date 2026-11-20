@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
     TransactionEntry(
       name: "Lunch",
       description: "Group Lunch",
-      type: "Expance",
+      type: "Expense",
       amount: 300,
       time: DateTime.now(),
     ),

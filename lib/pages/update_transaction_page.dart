@@ -15,8 +15,9 @@ class _UpdateTransactionPageState extends State<UpdateTransactionPage> {
 
   late final TextEditingController _nameTEController;
   late final TextEditingController _descriptionTEController;
-  late final TextEditingController _typeTEController;
   late final TextEditingController _amountTEController;
+
+  String? _selectedType;
 
   @override
   void initState() {
@@ -27,12 +28,11 @@ class _UpdateTransactionPageState extends State<UpdateTransactionPage> {
     _descriptionTEController = TextEditingController(
       text: widget.transactionEntry.description,
     );
-    _typeTEController = TextEditingController(
-      text: widget.transactionEntry.type,
-    );
     _amountTEController = TextEditingController(
       text: widget.transactionEntry.amount.toString(),
     );
+
+    _selectedType = widget.transactionEntry.type;
   }
 
   void _updateTransaction() {
@@ -51,7 +51,7 @@ class _UpdateTransactionPageState extends State<UpdateTransactionPage> {
     final updatedTransaction = TransactionEntry(
       name: _nameTEController.text.trim(),
       description: _descriptionTEController.text.trim(),
-      type: _typeTEController.text.trim(),
+      type: _selectedType!,
       amount: amount,
       time: DateTime.now(),
     );
@@ -84,9 +84,32 @@ class _UpdateTransactionPageState extends State<UpdateTransactionPage> {
 
               const SizedBox(height: 15),
 
-              AppTextfield(
-                controller: _typeTEController,
-                label: "Transaction Type",
+              const Align(
+                alignment: Alignment.center,
+                child: Text("Transaction Type", style: TextStyle(fontSize: 16)),
+              ),
+
+              const SizedBox(height: 10),
+
+              SegmentedButton<String>(
+                segments: const [
+                  ButtonSegment<String>(
+                    value: "Income",
+                    label: Text("Income"),
+                    icon: Icon(Icons.trending_up),
+                  ),
+                  ButtonSegment<String>(
+                    value: "Expense",
+                    label: Text("Expense"),
+                    icon: Icon(Icons.trending_down),
+                  ),
+                ],
+                selected: {?_selectedType},
+                onSelectionChanged: (Set<String> selected) {
+                  setState(() {
+                    _selectedType = selected.first;
+                  });
+                },
               ),
 
               const SizedBox(height: 15),

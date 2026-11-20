@@ -13,7 +13,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameTEController = TextEditingController();
   final _descriptionTEController = TextEditingController();
-  final _typeTEController = TextEditingController();
+  String _selectedType = "Expense";
   final _amountTEController = TextEditingController();
 
   void _addTransaction() {
@@ -26,13 +26,14 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
     if (amount == null || amount <= 0) {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Enter a Valid Amount")));
+      return;
     }
 
     final transaction = TransactionEntry(
       name: _nameTEController.text.trim(),
       description: _descriptionTEController.text.trim(),
-      type: _typeTEController.text.trim(),
-      amount: amount!,
+      type: _selectedType,
+      amount: amount,
       time: DateTime.now(),
     );
 
@@ -64,9 +65,32 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
 
               const SizedBox(height: 15),
 
-              AppTextfield(
-                controller: _typeTEController,
-                label: "Transaction Type",
+              const Align(
+                alignment: Alignment.center,
+                child: Text("Transaction Type", style: TextStyle(fontSize: 16)),
+              ),
+
+              const SizedBox(height: 10),
+
+              SegmentedButton<String>(
+                segments: const [
+                  ButtonSegment<String>(
+                    value: "Income",
+                    label: Text("Income"),
+                    icon: Icon(Icons.trending_up),
+                  ),
+                  ButtonSegment<String>(
+                    value: "Expense",
+                    label: Text("Expense"),
+                    icon: Icon(Icons.trending_down),
+                  ),
+                ],
+                selected: {_selectedType},
+                onSelectionChanged: (Set<String> selected) {
+                  setState(() {
+                    _selectedType = selected.first;
+                  });
+                },
               ),
 
               const SizedBox(height: 15),
