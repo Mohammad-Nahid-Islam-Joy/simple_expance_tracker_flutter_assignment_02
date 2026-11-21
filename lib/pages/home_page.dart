@@ -1,4 +1,4 @@
-import 'package:expance_tracker/database/app_database.dart';
+import 'package:expance_tracker/core/database/app_database.dart';
 import 'package:expance_tracker/models/transaction.dart';
 import 'package:expance_tracker/pages/add_transaction_page.dart';
 import 'package:expance_tracker/pages/update_transaction_page.dart';
