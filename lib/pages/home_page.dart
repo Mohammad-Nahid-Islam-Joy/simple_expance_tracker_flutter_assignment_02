@@ -1,3 +1,4 @@
+import 'package:expance_tracker/database/app_database.dart';
 import 'package:expance_tracker/models/transaction.dart';
 import 'package:expance_tracker/pages/add_transaction_page.dart';
 import 'package:expance_tracker/pages/update_transaction_page.dart';
@@ -14,23 +15,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<Transaction> _transactions = [
-    Transaction(
-      name: "Salary",
-      description: "Monthly Salary",
-      type: "Income",
-      amount: 5000,
-      time: DateTime.now(),
-    ),
-    Transaction(
-      name: "Lunch",
-      description: "Group Lunch",
-      type: "Expense",
-      amount: 300,
-      time: DateTime.now(),
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
     void showMessage(String message) {
@@ -49,19 +33,16 @@ class _HomePageState extends State<HomePage> {
         return;
       }
 
-      setState(() {
-        _transactions.add(transaction);
-      });
+      await AppDatabase.instance.insertTransaction(transaction);
 
       showMessage("Transaction Added");
     }
 
-    Future<void> gotoUpdatePage(int index) async {
+    Future<void> gotoUpdatePage(Transaction transaction) async {
       final updatedTransaction = await Navigator.push<Transaction>(
         context,
         MaterialPageRoute(
-          builder: (context) =>
-              UpdateTransactionPage(transaction: _transactions[index]),
+          builder: (context) => UpdateTransactionPage(transaction: transaction),
         ),
       );
 
@@ -69,22 +50,25 @@ class _HomePageState extends State<HomePage> {
         return;
       }
 
-      setState(() {
-        _transactions[index] = updatedTransaction;
-      });
+      await AppDatabase.instance.updateTransactions(updatedTransaction);
 
       showMessage("Transaction Updated");
     }
 
-    void deleteTransaction(int index) {
-      setState(() {
-        _transactions.removeAt(index);
-      });
+    Future<void> deleteTransaction(Transaction transaction) async {
+      if (transaction.id == null) {
+        return;
+      }
+
+      await AppDatabase.instance.deleteTransaction(transaction.id!);
 
       showMessage("Transaction Deleted");
     }
 
-    Future<void> showPopOverMenu(BuildContext tileContext, int index) async {
+    Future<void> showPopOverMenu(
+      BuildContext tileContext,
+      Transaction transaction,
+    ) async {
       final action = await showPopover(
         context: tileContext,
         bodyBuilder: (context) => const TransactionActionMenu(),
@@ -98,37 +82,47 @@ class _HomePageState extends State<HomePage> {
 
       if (!mounted || action == null) return;
 
-      if (index >= _transactions.length) {
-        return;
-      }
-
       if (action == "update") {
-        await gotoUpdatePage(index);
+        await gotoUpdatePage(transaction);
       } else if (action == "delete") {
-        deleteTransaction(index);
+        deleteTransaction(transaction);
       }
     }
 
     return Scaffold(
-      body: _transactions.isEmpty
-          ? const Text("NO products Added")
-          : ListView.builder(
-              itemCount: _transactions.length,
-              itemBuilder: (context, index) {
-                final transaction = _transactions[index];
+      body: StreamBuilder<List<Transaction>>(
+        stream: AppDatabase.instance.watchAllTransactions(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting &&
+              !snapshot.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-                return Builder(
-                  builder: (tileContext) {
-                    return TransactionTile(
-                      transaction: transaction,
-                      onLongPressed: () {
-                        showPopOverMenu(tileContext, index);
-                      },
-                    );
-                  },
-                );
-              },
-            ),
+          final transactions = snapshot.data ?? [];
+
+          if (transactions.isEmpty) {
+            return const Center(child: Text("No Transaction Found!"));
+          }
+
+          return ListView.builder(
+            itemCount: transactions.length,
+            itemBuilder: (context, index) {
+              final transaction = transactions[index];
+
+              return Builder(
+                builder: (tileContext) {
+                  return TransactionTile(
+                    transaction: transaction,
+                    onLongPressed: () {
+                      showPopOverMenu(tileContext, transaction);
+                    },
+                  );
+                },
+              );
+            },
+          );
+        },
+      ),
 
       floatingActionButton: FloatingActionButton(
         onPressed: gotoAddPage,

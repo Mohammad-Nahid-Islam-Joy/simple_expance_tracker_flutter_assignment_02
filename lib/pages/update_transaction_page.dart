@@ -47,6 +47,7 @@ class _UpdateTransactionPageState extends State<UpdateTransactionPage> {
     }
 
     final updatedTransaction = Transaction(
+      id: widget.transaction.id,
       name: _nameTEController.text.trim(),
       description: _descriptionTEController.text.trim(),
       type: _selectedType!,
