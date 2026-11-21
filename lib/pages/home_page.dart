@@ -1,4 +1,4 @@
-import 'package:expance_tracker/models/transaction_entry.dart';
+import 'package:expance_tracker/models/transaction.dart';
 import 'package:expance_tracker/pages/add_transaction_page.dart';
 import 'package:expance_tracker/pages/update_transaction_page.dart';
 import 'package:expance_tracker/widget/transaction_action_menu.dart';
@@ -14,15 +14,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<TransactionEntry> _transactions = [
-    TransactionEntry(
+  final List<Transaction> _transactions = [
+    Transaction(
       name: "Salary",
       description: "Monthly Salary",
       type: "Income",
       amount: 5000,
       time: DateTime.now(),
     ),
-    TransactionEntry(
+    Transaction(
       name: "Lunch",
       description: "Group Lunch",
       type: "Expense",
@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     Future<void> gotoAddPage() async {
-      final transaction = await Navigator.push<TransactionEntry>(
+      final transaction = await Navigator.push<Transaction>(
         context,
         MaterialPageRoute(builder: (context) => const AddTransactionPage()),
       );
@@ -57,11 +57,11 @@ class _HomePageState extends State<HomePage> {
     }
 
     Future<void> gotoUpdatePage(int index) async {
-      final updatedTransaction = await Navigator.push<TransactionEntry>(
+      final updatedTransaction = await Navigator.push<Transaction>(
         context,
         MaterialPageRoute(
           builder: (context) =>
-              UpdateTransactionPage(transactionEntry: _transactions[index]),
+              UpdateTransactionPage(transaction: _transactions[index]),
         ),
       );
 

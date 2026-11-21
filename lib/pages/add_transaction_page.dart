@@ -1,4 +1,4 @@
-import 'package:expance_tracker/models/transaction_entry.dart';
+import 'package:expance_tracker/models/transaction.dart';
 import 'package:expance_tracker/widget/app_textfield.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -29,7 +29,7 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
       return;
     }
 
-    final transaction = TransactionEntry(
+    final transaction = Transaction(
       name: _nameTEController.text.trim(),
       description: _descriptionTEController.text.trim(),
       type: _selectedType,
@@ -115,5 +115,13 @@ class _AddTransactionPageState extends State<AddTransactionPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _nameTEController.dispose();
+    _descriptionTEController.dispose();
+    _amountTEController.dispose();
   }
 }

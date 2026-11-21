@@ -1,9 +1,9 @@
-import 'package:expance_tracker/models/transaction_entry.dart';
+import 'package:expance_tracker/models/transaction.dart';
 import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
 
 class TransactionTile extends StatelessWidget {
-  final TransactionEntry transaction;
+  final Transaction transaction;
   final VoidCallback onLongPressed;
   const TransactionTile({
     super.key,

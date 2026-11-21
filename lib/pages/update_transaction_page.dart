@@ -1,10 +1,10 @@
-import 'package:expance_tracker/models/transaction_entry.dart';
+import 'package:expance_tracker/models/transaction.dart';
 import 'package:expance_tracker/widget/app_textfield.dart';
 import 'package:material_ui/material_ui.dart';
 
 class UpdateTransactionPage extends StatefulWidget {
-  final TransactionEntry transactionEntry;
-  const UpdateTransactionPage({super.key, required this.transactionEntry});
+  final Transaction transaction;
+  const UpdateTransactionPage({super.key, required this.transaction});
 
   @override
   State<UpdateTransactionPage> createState() => _UpdateTransactionPageState();
@@ -22,17 +22,15 @@ class _UpdateTransactionPageState extends State<UpdateTransactionPage> {
   @override
   void initState() {
     super.initState();
-    _nameTEController = TextEditingController(
-      text: widget.transactionEntry.name,
-    );
+    _nameTEController = TextEditingController(text: widget.transaction.name);
     _descriptionTEController = TextEditingController(
-      text: widget.transactionEntry.description,
+      text: widget.transaction.description,
     );
     _amountTEController = TextEditingController(
-      text: widget.transactionEntry.amount.toString(),
+      text: widget.transaction.amount.toString(),
     );
 
-    _selectedType = widget.transactionEntry.type;
+    _selectedType = widget.transaction.type;
   }
 
   void _updateTransaction() {
@@ -48,7 +46,7 @@ class _UpdateTransactionPageState extends State<UpdateTransactionPage> {
       return;
     }
 
-    final updatedTransaction = TransactionEntry(
+    final updatedTransaction = Transaction(
       name: _nameTEController.text.trim(),
       description: _descriptionTEController.text.trim(),
       type: _selectedType!,
@@ -134,5 +132,13 @@ class _UpdateTransactionPageState extends State<UpdateTransactionPage> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _nameTEController.dispose();
+    _descriptionTEController.dispose();
+    _amountTEController.dispose();
   }
 }
